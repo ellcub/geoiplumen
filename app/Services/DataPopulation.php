@@ -54,7 +54,7 @@ class DataPopulation
 
     /**
      * Extract csv file from the zip archive
-     * @throws \Exception
+     * @throws Exception
      */
     public function extractCSV()
     {
@@ -71,5 +71,25 @@ class DataPopulation
         } else {
             throw new Exception('Failed to extract CSV');
         }
+    }
+
+    public function populateData()
+    {
+        if (($h = fopen(storage_path('app/').$this->storeCsv, 'r')) !== false) {
+            while (($data = fgetcsv($h, 100000, ",")) !== false) {
+                DB::table('geo_ip_country')->insert(
+                    [
+                        'start_ip_octet' => $data[0],
+                        'end_ip_octet' => $data[1],
+                        'start_ip_integer' => $data[2],
+                        'end_ip_integer' => $data[3],
+                        'country_code' => $data[4],
+                        'country_name' => $data[5]
+                    ]
+                );
+            }
+        }
+
+        echo DB::table('geo_ip_country')->count();
     }
 }
