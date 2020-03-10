@@ -15,3 +15,9 @@ From the project folder, run
 ```bash
 php artisan app:populate-data
 ```
+
+## Running unit tests
+From the project folder, run 
+```bash
+phpunit
+```
