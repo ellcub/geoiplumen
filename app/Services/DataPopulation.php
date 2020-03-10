@@ -75,20 +75,19 @@ class DataPopulation
 
     public function populateData()
     {
-        if (($h = fopen(storage_path('app/').$this->storeCsv, 'r')) !== false) {
-            while (($data = fgetcsv($h, 100000, ",")) !== false) {
-                DB::table('geo_ip_country')->insert(
-                    [
-                        'start_ip_octet' => $data[0],
-                        'end_ip_octet' => $data[1],
-                        'start_ip_integer' => $data[2],
-                        'end_ip_integer' => $data[3],
-                        'country_code' => $data[4],
-                        'country_name' => $data[5]
-                    ]
-                );
-            }
-        }
+        $file = storage_path('app/').$this->storeCsv;
+        $query = "LOAD DATA LOCAL INFILE '".$file."'
+            INTO TABLE geo_ip_country
+            FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+            LINES TERMINATED BY '\n'
+            (start_ip_octet,
+            end_ip_octet,
+            start_ip_integer,
+            end_ip_integer,
+            country_code,
+            country_name
+            )";
+        DB::connection()->getpdo()->exec($query);
 
         echo DB::table('geo_ip_country')->count();
     }
