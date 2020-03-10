@@ -21,7 +21,7 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
-// $app->withFacades();
+$app->withFacades();
 
 // $app->withEloquent();
 
@@ -52,6 +52,7 @@ $app->singleton(
         return $app->loadComponent('filesystems', 'Illuminate\Filesystem\FilesystemServiceProvider', 'filesystem');
     }
 );
+
 /*
 |--------------------------------------------------------------------------
 | Register Config Files
@@ -114,6 +115,8 @@ $app->configure('app');
 if (class_exists('Laravel\Tinker\TinkerServiceProvider')) {
     $app->register(Laravel\Tinker\TinkerServiceProvider::class);
 }
+// Register Laravel generators
+$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 
 $app->router->group(
     [
