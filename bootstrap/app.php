@@ -104,10 +104,18 @@ $app->configure('app');
 |
 */
 
-$app->router->group([
-    'namespace' => 'App\Http\Controllers',
-], function ($router) {
-    require __DIR__.'/../routes/web.php';
-});
+// Register artisan tinker for use in development
+if (class_exists('Laravel\Tinker\TinkerServiceProvider')) {
+    $app->register(Laravel\Tinker\TinkerServiceProvider::class);
+}
+
+$app->router->group(
+    [
+        'namespace' => 'App\Http\Controllers',
+    ],
+    function ($router) {
+        require __DIR__.'/../routes/web.php';
+    }
+);
 
 return $app;
