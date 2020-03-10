@@ -1,10 +1,13 @@
 # Geo IP Country Whois application
 
 ## Installation
-1. Clone the repo
-2. Set up a database and add the details to the `.env`
-3. Set up your host / webserver.  I used Homestead and called this geoiplumen.test, so in my  `.env` I have `APP_URL=http://geoipapp.test/`
+1. Clone the repo, eg. `git clone git@github.com:ellcub/geoiplumen.git`
+2. In the project folder, copy .env.example to .env `cp .env.example .env`
+3. Set up a database and add the details to the `.env`
 4. Run `composer install` to install dependencies
+5. Run the database migrations `php artisan migrate`
+6. Populate the database (see below) `php artisan app:populate-data`
+7. Serve the application using the built-in PHP development server `php -S localhost:8000 -t public`
 
 ## Usage
 ### Populating the database from the remote zip file
@@ -12,16 +15,17 @@ From the project folder, run
 ```bash
 php artisan app:populate-data
 ```
+(See installation step 6)
 
 ### The API Endpoint
-Using Postman or a web browser, go to `http://geoiplumen.test/locationByIP?IP=2.20.183.200` where `http://geoiplumen.test`
-is you APP_URL, and replace `2.20.183.200` with any IP address.
+Using a web browser (or Postman), go to `http://localhost:8000/locationByIP?IP=2.20.183.200` 
+and replace `2.20.183.200` with any IP address.
 
 
 ### Running unit tests
 From the project folder, run 
 ```bash
-phpunit
+vendor/bin/phpunit
 ```
 
 
@@ -42,5 +46,5 @@ Other hints for appropriate data types are also at https://dev.maxmind.com/geoip
 MySQL's LOAD DATA INFILE is used.  This gives much faster loading than looping through the CSV line by line for example.
 
 #### Indexes
-Indexes have been added to the columns we search on for faster searches
+Indexes have been added to the columns we search on for faster searches.
 
