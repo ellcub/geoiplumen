@@ -20,5 +20,6 @@ return [
             'options' => array(PDO::MYSQL_ATTR_LOCAL_INFILE => true),
         ],
     ],
+    'migrations' => 'migrations',
 
 ];
