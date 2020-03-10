@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
+/**
+ * Populate the Geo IP Country Whois data table
+ *
+ * Class DataPopulation
+ * @package App\Services
+ */
 class DataPopulation
 {
 
@@ -26,19 +32,25 @@ class DataPopulation
     protected $storeZipFile = 'geoipcountrycsv.zip';
 
     /**
+     * Location to store CSV
      * @var string
      */
     protected $storeCsv;
 
     /**
+     * Data storage table
+     * @var string
+     */
+    protected $table = 'geo_ip_country';
+
+    /**
      * Check whether a table has any records
      *
-     * @param  string  $table
      * @return bool
      */
-    public function checkDataIsPopulated($table = 'geo_ip_country'): bool
+    public function checkDataIsPopulated(): bool
     {
-        return (bool)DB::table($table)->count();
+        return (bool)DB::table($this->table)->count();
     }
 
     /**
@@ -56,7 +68,7 @@ class DataPopulation
      * Extract csv file from the zip archive
      * @throws Exception
      */
-    public function extractCSV()
+    public function extractCSV(): void
     {
         $zipFile = storage_path('app/'.$this->storeZipFile);
 
@@ -73,7 +85,10 @@ class DataPopulation
         }
     }
 
-    public function populateData()
+    /**
+     * Load CSV data into table
+     */
+    public function populateData(): void
     {
         $file = storage_path('app/').$this->storeCsv;
         $query = "LOAD DATA LOCAL INFILE '".$file."'
@@ -88,7 +103,18 @@ class DataPopulation
             country_name
             )";
         DB::connection()->getpdo()->exec($query);
+    }
 
-        echo DB::table('geo_ip_country')->count();
+    /**
+     * Check if the table is empty, and if so, download and unzip the csv file and load it into the table
+     * @throws Exception
+     */
+    public function execute(): void
+    {
+        if ($this->checkDataIsPopulated() === false) {
+            $this->downloadFile();
+            $this->extractCSV();
+            $this->populateData();
+        }
     }
 }
